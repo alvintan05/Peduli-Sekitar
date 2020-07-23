@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.alvin.projekuas.R;
+import com.alvin.projekuas.databinding.ActivityHomeBinding;
 import com.alvin.projekuas.ui.main.myreport.MyReportFragment;
 import com.alvin.projekuas.ui.main.profile.ProfileActivity;
 import com.alvin.projekuas.ui.main.home.HomeFragment;
@@ -18,18 +19,19 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class HomeActivity extends AppCompatActivity {
 
+    private ActivityHomeBinding binding;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home);
-
-        BottomNavigationView navView = findViewById(R.id.bottom_nav);
+        binding = ActivityHomeBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         // initial fragment
         if (getSupportActionBar()!=null) getSupportActionBar().setTitle("Home");
         initialFragment();
 
-        navView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+        binding.bottomNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                 switch (menuItem.getItemId()) {

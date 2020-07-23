@@ -13,9 +13,6 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -27,6 +24,7 @@ import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 
 import com.alvin.projekuas.R;
+import com.alvin.projekuas.databinding.ActivityAddPostBinding;
 import com.alvin.projekuas.entity.Report;
 import com.alvin.projekuas.ui.main.home.HomeFragment;
 import com.alvin.projekuas.utils.Preference;
@@ -35,7 +33,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -54,11 +51,8 @@ import java.util.Date;
 public class AddPostActivity extends AppCompatActivity implements View.OnClickListener {
 
     // widget
-    private TextInputEditText edtTitle, edtDesc;
-    private Button btnAddImage, btnAddLocation, btnSave;
-    private ImageView imgPreview;
-    private TextView tvLocation;
     private ProgressDialog progressDialog;
+    private ActivityAddPostBinding binding;
 
     // vars
     private static final int REQUEST_PERMISSION = 100;
@@ -78,16 +72,10 @@ public class AddPostActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_post);
+        binding = ActivityAddPostBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         // casting widget
-        edtTitle = findViewById(R.id.edt_judul);
-        edtDesc = findViewById(R.id.edt_deskripsi);
-        btnAddImage = findViewById(R.id.btn_add_image);
-        btnAddLocation = findViewById(R.id.btn_add_location);
-        btnSave = findViewById(R.id.btn_save_data);
-        imgPreview = findViewById(R.id.img_preview);
-        tvLocation = findViewById(R.id.tv_alamat);
         preference = new Preference(this);
         progressDialog = new ProgressDialog(this);
 
@@ -100,9 +88,9 @@ public class AddPostActivity extends AppCompatActivity implements View.OnClickLi
 
         userId = preference.getUserId();
 
-        btnSave.setOnClickListener(this);
-        btnAddLocation.setOnClickListener(this);
-        btnAddImage.setOnClickListener(this);
+        binding.btnSaveData.setOnClickListener(this);
+        binding.btnAddLocation.setOnClickListener(this);
+        binding.btnAddImage.setOnClickListener(this);
 
         getUserData();
     }
@@ -236,9 +224,9 @@ public class AddPostActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void validate() {
-        String title = edtTitle.getText().toString().trim();
-        String desc = edtDesc.getText().toString().trim();
-        String address = tvLocation.getText().toString();
+        String title = binding.edtJudul.getText().toString().trim();
+        String desc = binding.edtDeskripsi.getText().toString().trim();
+        String address = binding.tvAlamat.getText().toString();
 
         if (title.length() > 0 && desc.length() > 0 && address.length() > 0 && image != null) {
             uploadPicture(title, desc, address);
@@ -302,7 +290,7 @@ public class AddPostActivity extends AppCompatActivity implements View.OnClickLi
         if (requestCode == GALLERY_REQUEST && resultCode == RESULT_OK) {
             Glide.with(this)
                     .load(data.getData())
-                    .into(imgPreview);
+                    .into(binding.imgPreview);
             try {
                 image = MediaStore.Images.Media.getBitmap(getContentResolver(), data.getData());
             } catch (IOException e) {
@@ -315,16 +303,16 @@ public class AddPostActivity extends AppCompatActivity implements View.OnClickLi
                     file);
             Glide.with(this)
                     .load(photoUri)
-                    .into(imgPreview);
+                    .into(binding.imgPreview);
 
             image = BitmapFactory.decodeFile(filepath);
         } else if (requestCode == LOCATION_REQUEST && resultCode == RESULT_OK) {
-            tvLocation.setVisibility(View.VISIBLE);
+            binding.tvAlamat.setVisibility(View.VISIBLE);
 
             latitude = data.getDoubleExtra("latitude", 1);
             longitude = data.getDoubleExtra("longitude", 1);
 
-            tvLocation.setText("" + data.getStringExtra("alamat"));
+            binding.tvAlamat.setText("" + data.getStringExtra("alamat"));
         }
     }
 

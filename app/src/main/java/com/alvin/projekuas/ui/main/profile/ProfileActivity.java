@@ -7,10 +7,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -18,6 +14,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.alvin.projekuas.R;
+import com.alvin.projekuas.databinding.ActivityProfileBinding;
+import com.alvin.projekuas.databinding.DialogFullscreenImageBinding;
 import com.alvin.projekuas.entity.Profile;
 import com.alvin.projekuas.ui.login.LoginActivity;
 import com.alvin.projekuas.utils.Preference;
@@ -27,7 +25,6 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
-import com.github.chrisbanes.photoview.PhotoView;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -43,16 +40,12 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 public class ProfileActivity extends AppCompatActivity implements View.OnClickListener {
 
     // widget
-    private ImageView imgAvatar;
-    private TextView tvNama, tvEmail, tvNomor, tvAlamat;
+    private ActivityProfileBinding binding;
+    private DialogFullscreenImageBinding dialogBinding;
     private ProgressDialog progressDialog;
-    private Button btnEdit, btnSignOut;
 
     // widget full image dialog
     private Dialog imageDialog;
-    private PhotoView photoView;
-    private ImageView closeDialog;
-    private ProgressBar progressBar;
 
     // vars
     private GoogleSignInClient mGoogleSignInClient;
@@ -67,16 +60,8 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profile);
-
-        // casting widget
-        imgAvatar = findViewById(R.id.img_profile_avatar);
-        tvNama = findViewById(R.id.tv_profile_nama);
-        tvEmail = findViewById(R.id.tv_profile_email);
-        tvNomor = findViewById(R.id.tv_profile_nomor);
-        tvAlamat = findViewById(R.id.tv_profile_alamat);
-        btnEdit = findViewById(R.id.btn_edit_profile);
-        btnSignOut = findViewById(R.id.btn_sign_out);
+        binding = ActivityProfileBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         preference = new Preference(this);
         progressDialog = new ProgressDialog(this);
@@ -102,10 +87,10 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         getDataFromDB();
         setUpFullImageDialog();
 
-        btnEdit.setOnClickListener(this);
-        btnSignOut.setOnClickListener(this);
-        imgAvatar.setOnClickListener(this);
-        closeDialog.setOnClickListener(this);
+        binding.btnEditProfile.setOnClickListener(this);
+        binding.btnSignOut.setOnClickListener(this);
+        binding.imgProfileAvatar.setOnClickListener(this);
+        dialogBinding.icCloseDialog.setOnClickListener(this);
     }
 
     private void getDataFromDB() {
@@ -142,30 +127,28 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         String alamat = profile.getAddress() != null ? profile.getAddress() : "Tidak ada data";
         String photo = profile.getPhoto() != null ? profile.getPhoto() : "";
 
-        tvNama.setText(nama);
-        tvEmail.setText(email);
-        tvNomor.setText(nomor);
-        tvAlamat.setText(alamat);
+        binding.tvProfileNama.setText(nama);
+        binding.tvProfileEmail.setText(email);
+        binding.tvProfileNomor.setText(nomor);
+        binding.tvProfileAlamat.setText(alamat);
 
         Glide.with(this)
                 .load(photo)
                 .error(R.drawable.noimage)
                 .fallback(R.drawable.noimage)
                 .apply(RequestOptions.circleCropTransform())
-                .into(imgAvatar);
+                .into(binding.imgProfileAvatar);
     }
 
     private void setUpFullImageDialog() {
-        View view = getLayoutInflater().inflate(R.layout.dialog_fullscreen_image, null);
+        dialogBinding = DialogFullscreenImageBinding.inflate(getLayoutInflater());
+//        View view = getLayoutInflater().inflate(R.layout.dialog_fullscreen_image, null);
         imageDialog = new Dialog(this, android.R.style.Theme_DeviceDefault_Light_NoActionBar_Fullscreen);
-        imageDialog.setContentView(view);
+        imageDialog.setContentView(dialogBinding.getRoot());
         imageDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
 
         // initialize widget dialog
-        photoView = view.findViewById(R.id.img_detail);
-        closeDialog = view.findViewById(R.id.ic_close_dialog);
-        progressBar = view.findViewById(R.id.progress_bar);
-        progressBar.setVisibility(View.VISIBLE);
+        dialogBinding.progressBar.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -196,18 +179,18 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 .listener(new RequestListener<Drawable>() {
                     @Override
                     public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                        progressBar.setVisibility(View.GONE);
+                        dialogBinding.progressBar.setVisibility(View.GONE);
                         Toast.makeText(ProfileActivity.this, "Harap coba lagi", Toast.LENGTH_SHORT).show();
                         return false;
                     }
 
                     @Override
                     public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                        progressBar.setVisibility(View.GONE);
+                        dialogBinding.progressBar.setVisibility(View.GONE);
                         return false;
                     }
                 })
-                .into(photoView);
+                .into(dialogBinding.imgDetail);
     }
 
     private void editProfile() {

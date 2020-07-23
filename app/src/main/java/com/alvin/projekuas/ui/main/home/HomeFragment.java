@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.alvin.projekuas.R;
+import com.alvin.projekuas.databinding.FragmentHomeBinding;
 import com.alvin.projekuas.entity.Report;
 import com.alvin.projekuas.ui.main.addpost.AddPostActivity;
 import com.alvin.projekuas.ui.main.detail.DetailReportActivity;
@@ -28,9 +29,7 @@ import com.google.firebase.firestore.Query;
 public class HomeFragment extends Fragment implements View.OnClickListener {
 
     // widget
-    private RecyclerView rvReport;
-    private FloatingActionButton fabAddPost;
-    private CoordinatorLayout rootLayout;
+    private FragmentHomeBinding binding;
 
     // vars
     private static final String TAG = "HomeFragment";
@@ -42,15 +41,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_home, container, false);
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        rvReport = view.findViewById(R.id.rv_home);
-        fabAddPost = view.findViewById(R.id.fab_add);
-        rootLayout = view.findViewById(R.id.coordinator);
+        binding = FragmentHomeBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
 
     @Override
@@ -61,7 +53,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
         setUpRecyclerView();
 
-        fabAddPost.setOnClickListener(this);
+        binding.fabAdd.setOnClickListener(this);
     }
 
     private void setUpRecyclerView() {
@@ -73,9 +65,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
         adapter = new HomeAdapter(options, getActivity());
 
-        rvReport.setHasFixedSize(true);
-        rvReport.setLayoutManager(new LinearLayoutManager(getActivity()));
-        rvReport.setAdapter(adapter);
+        binding.rvHome.setHasFixedSize(true);
+        binding.rvHome.setLayoutManager(new LinearLayoutManager(getActivity()));
+        binding.rvHome.setAdapter(adapter);
 
         adapter.setOnItemClickListener(new HomeAdapter.OnItemClickListener() {
             @Override
@@ -89,7 +81,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     }
 
     private void showSnackbar(String message) {
-        Snackbar snackbar = Snackbar.make(rootLayout,
+        Snackbar snackbar = Snackbar.make(binding.getRoot(),
                 message,
                 Snackbar.LENGTH_LONG);
         snackbar.show();
@@ -105,6 +97,12 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     public void onStop() {
         super.onStop();
         adapter.stopListening();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 
     @Override

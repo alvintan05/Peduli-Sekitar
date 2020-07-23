@@ -18,6 +18,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.alvin.projekuas.R;
+import com.alvin.projekuas.databinding.ActivityLocationPickerBinding;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -35,8 +36,7 @@ import java.util.Locale;
 
 public class LocationPickerActivity extends AppCompatActivity implements OnMapReadyCallback, View.OnClickListener {
 
-    private TextView tvAddress;
-    private ImageButton btnSaveLocation;
+    private ActivityLocationPickerBinding binding;
 
     private GoogleMap mMap;
     private double latitude;
@@ -49,16 +49,14 @@ public class LocationPickerActivity extends AppCompatActivity implements OnMapRe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_location_picker);
+        binding = ActivityLocationPickerBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-
-        tvAddress = findViewById(R.id.tv_alamat);
-        btnSaveLocation = findViewById(R.id.btn_save_location);
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle("Pilih Lokasi");
@@ -67,7 +65,7 @@ public class LocationPickerActivity extends AppCompatActivity implements OnMapRe
 
         statusCheck();
 
-        btnSaveLocation.setOnClickListener(this);
+        binding.btnSaveLocation.setOnClickListener(this);
     }
 
     @Override
@@ -88,7 +86,7 @@ public class LocationPickerActivity extends AppCompatActivity implements OnMapRe
                     latitude = center.latitude;
                     longitude = center.longitude;
 
-                    tvAddress.setText(getStringAddress(center.latitude, center.longitude));
+                    binding.tvAlamat.setText(getStringAddress(center.latitude, center.longitude));
                 } catch (Exception e) {
                     Toast.makeText(LocationPickerActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                 }

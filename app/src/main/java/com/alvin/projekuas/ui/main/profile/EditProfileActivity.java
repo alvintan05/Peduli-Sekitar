@@ -13,9 +13,6 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -27,6 +24,7 @@ import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 
 import com.alvin.projekuas.R;
+import com.alvin.projekuas.databinding.ActivityEditProfileBinding;
 import com.alvin.projekuas.entity.Profile;
 import com.alvin.projekuas.ui.main.addpost.LocationPickerActivity;
 import com.bumptech.glide.Glide;
@@ -34,7 +32,6 @@ import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.storage.FirebaseStorage;
@@ -50,11 +47,8 @@ import java.util.Date;
 public class EditProfileActivity extends AppCompatActivity implements View.OnClickListener {
 
     // widget
-    private TextInputEditText edtNama, edtEmail, edtNomor;
-    private TextView tvAlamat;
-    private Button btnLocation, btnUpdate;
-    private ImageView imgAvatar;
     private ProgressDialog progressDialog;
+    private ActivityEditProfileBinding binding;
 
     // vars
     private static final String TAG = "EditProfileActivity";
@@ -74,16 +68,10 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_edit_profile);
+        binding = ActivityEditProfileBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         // casting
-        edtNama = findViewById(R.id.edt_nama);
-        edtEmail = findViewById(R.id.edt_email);
-        edtNomor = findViewById(R.id.edt_nomor);
-        tvAlamat = findViewById(R.id.tv_edit_alamat);
-        imgAvatar = findViewById(R.id.img_profile_avatar);
-        btnLocation = findViewById(R.id.btn_edit_location);
-        btnUpdate = findViewById(R.id.btn_update);
         progressDialog = new ProgressDialog(this);
 
         progressDialog.setMessage("Harap Tunggu...");
@@ -97,21 +85,21 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        btnLocation.setOnClickListener(this);
-        btnUpdate.setOnClickListener(this);
-        imgAvatar.setOnClickListener(this);
+        binding.btnEditLocation.setOnClickListener(this);
+        binding.btnUpdate.setOnClickListener(this);
+        binding.imgProfileAvatar.setOnClickListener(this);
     }
 
     private void attachToView() {
-        edtNama.setText(profile.getName());
-        edtEmail.setText(profile.getEmail());
-        edtNomor.setText(profile.getPhone());
-        tvAlamat.setText(profile.getAddress());
+        binding.edtNama.setText(profile.getName());
+        binding.edtEmail.setText(profile.getEmail());
+        binding.edtNomor.setText(profile.getPhone());
+        binding.tvEditAlamat.setText(profile.getAddress());
 
         Glide.with(this)
                 .load(profile.getPhoto())
                 .apply(RequestOptions.circleCropTransform())
-                .into(imgAvatar);
+                .into(binding.imgProfileAvatar);
     }
 
     @Override
@@ -219,10 +207,10 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
     }
 
     private void validate() {
-        String nama = edtNama.getText().toString().trim();
-        String email = edtEmail.getText().toString().trim();
-        String nomor = edtNomor.getText().toString().trim();
-        String alamat = tvAlamat.getText().toString().trim();
+        String nama = binding.edtNama.getText().toString().trim();
+        String email = binding.edtEmail.getText().toString().trim();
+        String nomor = binding.edtNomor.getText().toString().trim();
+        String alamat = binding.tvEditAlamat.getText().toString().trim();
 
         if (nama.length() > 0 && email.length() > 0 && nomor.length() > 0 && alamat.length() > 0) {
 
@@ -291,7 +279,7 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
             Glide.with(this)
                     .load(data.getData())
                     .apply(RequestOptions.circleCropTransform())
-                    .into(imgAvatar);
+                    .into(binding.imgProfileAvatar);
             try {
                 image = MediaStore.Images.Media.getBitmap(getContentResolver(), data.getData());
             } catch (IOException e) {
@@ -305,11 +293,11 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
             Glide.with(this)
                     .load(photoUri)
                     .apply(RequestOptions.circleCropTransform())
-                    .into(imgAvatar);
+                    .into(binding.imgProfileAvatar);
 
             image = BitmapFactory.decodeFile(filepath);
         } else if (requestCode == LOCATION_REQUEST && resultCode == RESULT_OK) {
-            tvAlamat.setText("" + data.getStringExtra("alamat"));
+            binding.tvEditAlamat.setText("" + data.getStringExtra("alamat"));
 
             latitude = data.getDoubleExtra("latitude", 1);
             longitude = data.getDoubleExtra("longitude", 1);

@@ -1,10 +1,5 @@
 package com.alvin.projekuas.ui.main.detail;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -12,13 +7,16 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.alvin.projekuas.R;
+import com.alvin.projekuas.databinding.ActivityDetailReportBinding;
 import com.alvin.projekuas.entity.Profile;
 import com.alvin.projekuas.entity.Report;
 import com.bumptech.glide.Glide;
@@ -30,7 +28,6 @@ import com.bumptech.glide.request.target.Target;
 import com.github.chrisbanes.photoview.PhotoView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -42,12 +39,8 @@ import java.util.Date;
 public class DetailReportActivity extends AppCompatActivity implements View.OnClickListener {
 
     // widget
-    private Toolbar toolbarDetail;
-    private CollapsingToolbarLayout detailCollapseToolbar;
-    private ImageView imgDetail, imgAvatar;
-    private TextView tvDetailTitle, tvDetailDesc, tvDetailUsername, tvDetailDate, tvDetailAlamat;
-    private Button btnLokasi;
     private ProgressDialog progressDialog;
+    private ActivityDetailReportBinding binding;
 
     // widget full image dialog
     private Dialog imageDialog;
@@ -64,26 +57,17 @@ public class DetailReportActivity extends AppCompatActivity implements View.OnCl
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_detail_report);
+        binding = ActivityDetailReportBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         // casting
-        toolbarDetail = findViewById(R.id.toolbar_detail);
-        detailCollapseToolbar = findViewById(R.id.collapse_toolbar_detail);
-        imgDetail = findViewById(R.id.img_detail);
-        tvDetailTitle = findViewById(R.id.tv_detail_title);
-        tvDetailDesc = findViewById(R.id.tv_detail_desc);
-        tvDetailAlamat = findViewById(R.id.tv_detail_alamat);
-        imgAvatar = findViewById(R.id.img_detail_avatar);
-        tvDetailUsername = findViewById(R.id.tv_detail_username);
-        tvDetailDate = findViewById(R.id.tv_detail_date);
-        btnLokasi = findViewById(R.id.btn_detail_location);
         progressDialog = new ProgressDialog(this);
 
         progressDialog.setMessage("Harap Tunggu...");
 
         db = FirebaseFirestore.getInstance();
 
-        setSupportActionBar(toolbarDetail);
+        setSupportActionBar(binding.toolbarDetail);
         setUpFullImageDialog();
 
         if (getSupportActionBar() != null) {
@@ -96,11 +80,11 @@ public class DetailReportActivity extends AppCompatActivity implements View.OnCl
             getDetailData(extras.getString("path"));
         }
 
-        detailCollapseToolbar.setTitle("Detail Laporan");
-        detailCollapseToolbar.setExpandedTitleColor(getResources().getColor(android.R.color.transparent));
+        binding.collapseToolbarDetail.setTitle("Detail Laporan");
+        binding.collapseToolbarDetail.setExpandedTitleColor(getResources().getColor(android.R.color.transparent));
 
-        btnLokasi.setOnClickListener(this);
-        imgDetail.setOnClickListener(this);
+        binding.btnDetailLocation.setOnClickListener(this);
+        binding.imgDetail.setOnClickListener(this);
         closeDialog.setOnClickListener(this);
     }
 
@@ -157,16 +141,16 @@ public class DetailReportActivity extends AppCompatActivity implements View.OnCl
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMMM yyyy");
         String convertDate = dateFormat.format(userDate);
 
-        tvDetailTitle.setText(title);
-        tvDetailDesc.setText(description);
-        tvDetailDate.setText("Dilaporkan pada : " + convertDate);
-        tvDetailAlamat.setText(address);
+        binding.tvDetailTitle.setText(title);
+        binding.tvDetailDesc.setText(description);
+        binding.tvDetailDate.setText("Dilaporkan pada : " + convertDate);
+        binding.tvDetailAlamat.setText(address);
 
         Glide.with(this)
                 .load(photo)
                 .error(R.drawable.noimage)
                 .fallback(R.drawable.noimage)
-                .into(imgDetail);
+                .into(binding.imgDetail);
     }
 
     private void getUserDetail(String userId) {
@@ -198,14 +182,14 @@ public class DetailReportActivity extends AppCompatActivity implements View.OnCl
         String username = profile.getName() != null ? profile.getName() : "Tidak ada data";
 
 
-        tvDetailUsername.setText(username);
+        binding.tvDetailUsername.setText(username);
 
         Glide.with(this)
                 .load(avatar)
                 .error(R.drawable.noimage)
                 .fallback(R.drawable.noimage)
                 .apply(RequestOptions.circleCropTransform())
-                .into(imgAvatar);
+                .into(binding.imgDetailAvatar);
     }
 
     @Override

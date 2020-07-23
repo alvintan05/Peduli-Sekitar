@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alvin.projekuas.R;
+import com.alvin.projekuas.databinding.ActivityLoginBinding;
 import com.alvin.projekuas.ui.main.HomeActivity;
 import com.alvin.projekuas.utils.Preference;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -39,7 +40,7 @@ import java.util.Map;
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
     // widget
-    private SignInButton signInButton;
+    private ActivityLoginBinding binding;
 
     // vars
     private GoogleSignInClient mGoogleSignInClient;
@@ -52,7 +53,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        binding = ActivityLoginBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         // Configure Google Sign In
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -66,11 +68,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         preference = new Preference(this);
 
         // casting widget
-        signInButton = findViewById(R.id.btn_google_login);
 
-        setGoogleButtonText(signInButton, "Sign in with Google");
+        setGoogleButtonText(binding.btnGoogleLogin, "Sign in with Google");
 
-        signInButton.setOnClickListener(this);
+        binding.btnGoogleLogin.setOnClickListener(this);
     }
 
     @Override

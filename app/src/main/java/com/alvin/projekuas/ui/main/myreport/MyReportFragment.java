@@ -15,7 +15,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.alvin.projekuas.R;
+import com.alvin.projekuas.databinding.FragmentMyReportBinding;
 import com.alvin.projekuas.entity.Report;
 import com.alvin.projekuas.ui.main.detail.DetailReportActivity;
 import com.alvin.projekuas.utils.Preference;
@@ -33,7 +33,7 @@ import com.google.firebase.firestore.Query;
 public class MyReportFragment extends Fragment {
 
     // widget
-    private RecyclerView rvReport;
+    private FragmentMyReportBinding binding;
 
     // vars
     private static final String TAG = "MyReportFragment";
@@ -50,13 +50,8 @@ public class MyReportFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_my_report, container, false);
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        rvReport = view.findViewById(R.id.rv_report);
+        binding = FragmentMyReportBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
 
     @Override
@@ -82,9 +77,9 @@ public class MyReportFragment extends Fragment {
 
         adapter = new MyReportAdapter(options, getActivity());
 
-        rvReport.setHasFixedSize(true);
-        rvReport.setLayoutManager(new GridLayoutManager(getActivity(), 3, RecyclerView.VERTICAL, false));
-        rvReport.setAdapter(adapter);
+        binding.rvReport.setHasFixedSize(true);
+        binding.rvReport.setLayoutManager(new GridLayoutManager(getActivity(), 3, RecyclerView.VERTICAL, false));
+        binding.rvReport.setAdapter(adapter);
 
         adapter.setOnItemClickListener(new MyReportAdapter.OnItemClickListener() {
             @Override
@@ -150,5 +145,9 @@ public class MyReportFragment extends Fragment {
         adapter.stopListening();
     }
 
-
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
 }
