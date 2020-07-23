@@ -27,6 +27,7 @@ Peduli Sekitar is an application to report problems to the government. This is m
 
 ## Tech Stack
 - [x] Java
+- [x] View Binding
 - [x] Firebase Auth
 - [x] Cloud Firestore
 - [x] Firebase Cloud Storage
