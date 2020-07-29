@@ -34,9 +34,7 @@ Peduli Sekitar is an application to report problems to the government. This is m
 - [x] Maps API
 
 ## Apps
-<a href="https://play.google.com/store/apps/details?id=com.alvin.projekuas" title="Peduli Sekitar Apps">
-  <img src="https://github.githubassets.com/images/modules/dashboard/google-play-badge.png" width="130px;"/>
-</a>
+<a href="https://drive.google.com/file/d/1CT3f5dRcFja-dOvXc0uLNSASuCs9-Iv_/view?usp=sharing" title="Peduli Sekitar Apps">Download Here</a>
 
 ## Author
 | [<img src="https://avatars1.githubusercontent.com/u/32356015?v=3" width="100px;"/><br /><sub><b>Alvin Tandiardi</b></sub>](https://github.com/alvintan05)<br /> |
