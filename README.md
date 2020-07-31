@@ -20,6 +20,7 @@ Peduli Sekitar is an application to report problems to the government. This is m
 - [x] Home
 - [x] Maps all report location
 - [x] My Reports
+- [x] Long Press to Delete My Reports
 - [x] Detail Report
 - [x] Add Report
 - [x] Profile
